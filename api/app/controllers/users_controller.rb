@@ -16,9 +16,13 @@ class UsersController < ApplicationController
     end
 
     def rescrapper
-        @user = User.find(params[:id])
-        localuser =  User.get_github_user_data(url = @user.url)
-        @user.update_attributes(localuser)
+        localuser =  User.get_github_user_data(url = user_by_id.url)
+        user_by_id.update_attributes(localuser)
+    end
+
+    def search
+        @user = User.fulltext_search(params[:text])
+        render json: @user, status: :created
     end
 
     private 
@@ -26,4 +30,8 @@ class UsersController < ApplicationController
         def user_params
             params.require(:user).permit(:name, :url)
         end 
+
+        def user_by_id
+            User.find(params[:id])
+        end
 end

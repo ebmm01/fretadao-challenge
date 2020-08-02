@@ -1,5 +1,6 @@
 class User
     include Mongoid::Document
+    include Mongoid::FullTextSearch
 
     field :name, type: String
     field :url, type: String
@@ -17,7 +18,9 @@ class User
 
     before_validation :scrapper_user, :on => [:create]
 
-    
+    fulltext_search_in :name, :github_username, :location, :organization, :last_year_contributions, :stars
+
+
     def self.get_github_user_data(url)
         User.new.scrapper_user(url).attributes.except("_id", "creation_date", "name", "url")
     end
