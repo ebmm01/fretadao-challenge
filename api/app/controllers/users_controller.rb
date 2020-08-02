@@ -25,6 +25,14 @@ class UsersController < ApplicationController
         render json: @user, status: :created
     end
 
+    def show
+        if user_by_id
+            render json: user_by_id, status: :ok
+        else
+            render json: @user.errors, status: :not_found 
+        end
+    end
+    
     private 
 
         def user_params
