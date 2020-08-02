@@ -17,39 +17,43 @@ class User
     index({ github_username: 1 }, { unique: true, name: "github_username_index" })
 
     before_validation :scrapper_user, :on => [:create]
+    before_validation :shorten_url, :on => [:create]
 
     fulltext_search_in :name, :github_username, :location, :organization, :last_year_contributions, :stars
 
 
     def self.get_github_user_data(url)
-        User.new.scrapper_user(url).attributes.except("_id", "creation_date", "name", "url")
+        expanded_url = Services::URLHandler.unshorten(url)
+        User.new.scrapper_user(expanded_url).attributes.except("_id", "creation_date", "name", "url")
     end
     
     
-        def scrapper_user(url = false)
-            scrapper = Services::Scrapper.new(url||=self.url)
+    def scrapper_user(url = false)
+        scrapper = Services::Scrapper.new(url||=self.url)
 
-            if scrapper.check_user_existence
+        if scrapper.check_user_existence
 
-                get_user_data(scrapper)
-                
-                #self.url = self.url # TODO ENCURTAR
-
-                return self
-            else
-                self.errors.add('404', 'Not Found')
-                :abort
-            end
+            get_user_data(scrapper)
+            
+            return self
+        else
+            self.errors.add('404', 'Not Found')
+            :abort
         end
+    end
 
-        def get_user_data(scrapper)
-            self.github_username = scrapper.get_nick_name
-            self.followers = scrapper.get_followers
-            self.following = scrapper.get_following
-            self.stars = scrapper.get_stars
-            self.last_year_contributions = scrapper.get_last_year_contributions
-            self.profile_image = scrapper.get_profile_image
-            self.organization = scrapper.get_organizations
-            self.location = scrapper.get_location
-        end
+    def get_user_data(scrapper)
+        self.github_username = scrapper.get_nick_name
+        self.followers = scrapper.get_followers
+        self.following = scrapper.get_following
+        self.stars = scrapper.get_stars
+        self.last_year_contributions = scrapper.get_last_year_contributions
+        self.profile_image = scrapper.get_profile_image
+        self.organization = scrapper.get_organizations
+        self.location = scrapper.get_location
+    end
+
+    def shorten_url
+        self.url = Services::URLHandler.shorten(self.url)
+    end
 end
