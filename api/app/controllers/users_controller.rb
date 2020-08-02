@@ -15,6 +15,12 @@ class UsersController < ApplicationController
         end
     end
 
+    def rescrapper
+        @user = User.find(params[:id])
+        localuser =  User.get_github_user_data(url = @user.url)
+        @user.update_attributes(localuser)
+    end
+
     private 
 
         def user_params

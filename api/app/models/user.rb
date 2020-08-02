@@ -15,21 +15,24 @@ class User
 
     index({ github_username: 1 }, { unique: true, name: "github_username_index" })
 
-    before_validation :scrapper_user
+    before_validation :scrapper_user, :on => [:create]
 
-    def self.get_github_user_data
-        self.class.scrapper_user
+    
+    def self.get_github_user_data(url)
+        User.new.scrapper_user(url).attributes.except("_id", "creation_date", "name", "url")
     end
     
-    private
-        def scrapper_user
-            scrapper = Services::Scrapper.new(url=self.url)
+    
+        def scrapper_user(url = false)
+            scrapper = Services::Scrapper.new(url||=self.url)
 
             if scrapper.check_user_existence
 
                 get_user_data(scrapper)
                 
-                self.url = self.url # TODO ENCURTAR
+                #self.url = self.url # TODO ENCURTAR
+
+                return self
             else
                 self.errors.add('404', 'Not Found')
                 :abort
