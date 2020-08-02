@@ -1,6 +1,6 @@
 class User
     include Mongoid::Document
-    include Mongoid::FullTextSearch
+    include Mongoid::Search
 
     field :name, type: String
     field :url, type: String
@@ -19,7 +19,7 @@ class User
     before_validation :scrapper_user, :on => [:create]
     before_validation :shorten_url, :on => [:create]
 
-    fulltext_search_in :name, :github_username, :location, :organization, :last_year_contributions, :stars
+    search_in :name, :github_username, :location, :organization, :last_year_contributions, :stars
 
 
     def self.get_github_user_data(url)

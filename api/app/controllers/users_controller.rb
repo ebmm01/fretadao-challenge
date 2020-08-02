@@ -23,7 +23,7 @@ class UsersController < ApplicationController
     end
 
     def search
-        @user = User.fulltext_search(params[:text])
+        @user = User.full_text_search(params[:text])
         render json: @user, status: :created
     end
 
