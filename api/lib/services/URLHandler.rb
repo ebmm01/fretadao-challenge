@@ -4,7 +4,7 @@ require 'embiggen'
 module Services
     class URLHandler
         def self.shorten(url)
-            ShortURL.shorten(self.url)
+            ShortURL.shorten(url)
         end
 
         def self.unshorten(url)
