@@ -4,6 +4,7 @@ class User
 
     field :name, type: String
     field :url, type: String
+    field :github_name, type: String
     field :github_username, type: String
     field :followers, type: String
     field :following, type: String
@@ -19,7 +20,7 @@ class User
     before_validation :scrapper_user, :on => [:create]
     before_validation :shorten_url, :on => [:create]
 
-    search_in :name, :github_username, :location, :organization, :last_year_contributions, :stars
+    search_in :name, :github_username, :location, :organization, :last_year_contributions, :stars, :github_name
 
 
     def self.get_github_user_data(url)
@@ -44,6 +45,7 @@ class User
 
     def get_user_data(scrapper)
         self.github_username = scrapper.get_nick_name
+        self.github_name = scrapper.get_user_name
         self.followers = scrapper.get_followers
         self.following = scrapper.get_following
         self.stars = scrapper.get_stars
