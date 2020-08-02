@@ -32,6 +32,21 @@ class UsersController < ApplicationController
             render json: @user.errors, status: :not_found 
         end
     end
+
+    def update
+        if user_by_id.update(user_params)
+            if user_params["url"]
+                rescrapper
+            end
+            render json: user_by_id
+        else
+            render json: user_by_id.errors, status: :unprocessable_entity
+        end
+    end
+
+    def destroy
+        user_by_id.destroy
+    end
     
     private 
 
@@ -40,6 +55,6 @@ class UsersController < ApplicationController
         end 
 
         def user_by_id
-            User.find(params[:id])
+            User.find(params[:id] || params[:user_id])
         end
 end
