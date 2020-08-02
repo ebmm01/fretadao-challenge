@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+    before_action :user_by_id, only: [:rescrapper, :show, :update, :destroy]
+
     def index
         @users = User.all
 
@@ -16,8 +18,8 @@ class UsersController < ApplicationController
     end
 
     def rescrapper
-        localuser =  User.get_github_user_data(url = user_by_id.url)
-        user_by_id.update_attributes(localuser)
+        localuser =  User.get_github_user_data(url = @user.url)
+        @user.update_attributes(localuser)
     end
 
     def search
@@ -26,26 +28,26 @@ class UsersController < ApplicationController
     end
 
     def show
-        if user_by_id
-            render json: user_by_id, status: :ok
+        if @user
+            render json: @user, status: :ok
         else
             render json: @user.errors, status: :not_found 
         end
     end
 
     def update
-        if user_by_id.update(user_params)
+        if @user.update(user_params)
             if user_params["url"]
                 rescrapper
             end
-            render json: user_by_id
+            render json: @user
         else
-            render json: user_by_id.errors, status: :unprocessable_entity
+            render json: @user.errors, status: :unprocessable_entity
         end
     end
 
     def destroy
-        user_by_id.destroy
+        @user.destroy
     end
     
     private 
@@ -55,6 +57,6 @@ class UsersController < ApplicationController
         end 
 
         def user_by_id
-            User.find(params[:id] || params[:user_id])
+            @user = User.find(params[:id] || params[:user_id])
         end
 end
