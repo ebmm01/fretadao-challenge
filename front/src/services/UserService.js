@@ -14,11 +14,30 @@ class UserService {
     }
 
     async listUsers() {
-        return this.client.get("/users")
+        return await this.client.get("/users")
     }
 
     async searchUsers(text) {
-        return this.client.get(`/search/${text}`)
+        return await this.client.get(`/search/${text}`)
+    }
+
+    async rescrapUser(id) {
+        return await this.client.put(`users/${id}/rescrapper`)
+    }
+
+    async getUserById(id) {
+        return await this.client.get(`/users/${id}`)
+    }
+
+    async updateUser({ id, name, url = undefined}) {
+        return await this.client.put(`/users/${id}`, { 
+            name,
+            ...(!!url && { url })
+        })
+    }
+
+    async createUser({name, url}) {
+        return await this.client.post(`/users`, {name, url})
     }
 }
 
