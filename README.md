@@ -1,12 +1,12 @@
 # Fretadão challenge
 
-![](./assets/initial.png)
+![](./assets/initial.gif)
 
 Repositório com o projeto relativo ao desafio do Fretadão. Ele é dividido em api e front, onde em api/ está o projeto em __Rails__ e front/ o front-end do projeto, feito em __VueJs__. O deploy pode ser encontrado nos seguintes links: 
 
 Front-end (completo): [https://fretadao-challenge.netlify.app/#/](https://fretadao-challenge.netlify.app/#/) 
 
-> Obs.: O front usa a api para fazer as chamadas, e como o deploy da api foi feito no free-tier do Heroku pode haver uma lentidão ao fazer a primeira busca. Mas não se assuste, é apenas o dyno que estava "dormindo". Após a primeira requisição ser feita as demais ficam normais. Note que após alguns minutos a API pode voltar a "dormir" novamente.
+> Obs.: O front usa a api para fazer as chamadas, e como o deploy da api foi feito no free-tier do Heroku pode haver uma lentidão ao fazer a primeira busca, mas não se assuste: é apenas o dyno que estava "dormindo". Após a primeira requisição ser feita as demais ficam normais. Note que após alguns minutos a API pode voltar a "dormir" novamente.
 
 API: [https://fretadao-challenge.herokuapp.com/](https://fretadao-challenge.herokuapp.com/)
 
@@ -138,13 +138,22 @@ A gem __shorturl__ foi utilizada com suas configurações padrões, logo o encur
 
 ### Front End 
 
-Para o front end o framework escolhido foi o [__VueJs__](https://vuejs.org/). A preferência foi completamente pessoal, visto que trabalho com ele há mais de 1 ano, conhecendo o funcionamento dele. Também foi utilizada a biblioteca [__Vuetifyjs__](https://vuetifyjs.com/) para os componentes, por já disponibilizar diversos componentes com a filosofia do Material Design. A estilização foi feita utlizando o pré-processador __SCSS__, que facilita a implementação de blocos css. Apesar de o scss permitir a utlização de variáveis, permitindo a criação de uma folha de estilo, pela simplicidade do projeto elas não foram utilizadas.
+Para o front end o framework escolhido foi o [__VueJs__](https://vuejs.org/). A preferência foi completamente pessoal, visto que trabalho com ele há mais de 1 ano, conhecendo o funcionamento dele. Também foi utilizada a biblioteca [__Vuetifyjs__](https://vuetifyjs.com/) para os componentes, por já disponibilizar diversos componentes com a filosofia do Material Design. A estilização foi feita utlizando o pré-processador __SCSS__, que facilita a implementação de blocos css. Apesar de o scss permitir a utilização de variáveis, permitindo a criação de uma folha de estilo, pela simplicidade do projeto elas não foram utilizadas.
 
 ## Limitações e melhorias
 
-TODO
+Assim como definido no desafio, o projeto funciona somente com perfis de usuários. Tentar fazer o scrap de uma organização não surtirá efeito. Alguns pontos poderiam ser melhores ou menos limitados:
 
-## Breve gif
+### Scrapper & URLHandler
 
-![](./assets/initial.gif)
+O Scrapper, apesar de ter apenas uma responsabilidade e retornar os dados corretamente de acordo com o esperado assume uma premissa: que irá receber uma URL válida, desencurtada e especificamente do github. Isso é uma limitação, pois ele próprio poderia validar isso, dificultando a chance de um usuário inserir um dado de forma errônea. Além disso a implementação poderia ter sido feita utilizando um singleton, de forma que não fosse necessário instanciar a classe Scrapper toda vez que o método __scrapper_user__ fosse chamado na model.
+
+Tal validação também poderia retirar a necessidade de desencurtar a URL, tornando o URLHandler ainda mais simples.
+
+### Docker & outros pontos
+
+Uma melhoria seria a utilização de docker para que não fosse necessário instalar tantas dependências para o desenvolvimento (node, rails, etc). Nesse ponto, a realização do deploy amenizou um pouco as consequências, pois permite a visualização e execução do projeto em produção, porém não necessáriamente da última versão do projeto (o deploy contínuo foi realizado somente para o front-end). 
+
+Por fim, a API também poderia tratar melhor os erros, mapeando e tratando os diversos cenários de forma uniforme, retornando o erro bem formatado para o client. Nesse sentido o tratamento e retorno de exceções na api é precário, o que deixa os erros pouco claros.
+
 
