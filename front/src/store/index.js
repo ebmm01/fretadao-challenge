@@ -10,6 +10,7 @@ export default new Vuex.Store({
             creationDate: "",
             followers: "",
             following: "",
+            github_name: "",
             github_username: "",
             last_year_contributions: "",
             location: "",
