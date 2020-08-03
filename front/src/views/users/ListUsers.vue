@@ -88,8 +88,9 @@ export default {
     async created() {
         const _this = this
         EventBus.$on('doSeach', async value => {
-            console.log(value)
+            this.loading = true
             await _this.searchUsers(value)
+            this.loading = false
         })
     },
     beforeDestroy() {
