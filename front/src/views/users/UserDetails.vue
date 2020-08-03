@@ -27,6 +27,7 @@
                     </v-btn>
                     <v-btn
                         class="mx-2"
+                        @click="deleteUserDialog = true"
                         fab>
                         <v-icon>mdi-delete</v-icon>
                     </v-btn>
@@ -85,6 +86,10 @@
             :user-data="user"
             @updateUser="editUser"
             @closeDialog="editUserDialog = false" />
+        <DeleteUserDialog
+            :dialog="deleteUserDialog"
+            @confirmDelete="deleteUser"
+            @closeDialog="deleteUserDialog = false" />
     </section>
 </template>
 
@@ -92,16 +97,19 @@
 import { mapState, mapActions } from "vuex"
 import UserService from '../../services/UserService'
 import EditUserDialog from "./dialogs/EditUserDialog"
+import DeleteUserDialog from "./dialogs/DeleteUserDialog"
 
 const userService = new UserService();
 
 export default {
     components: {
-        EditUserDialog
+        EditUserDialog,
+        DeleteUserDialog
     },
     data: () => ({
         loading: false,
-        editUserDialog: false
+        editUserDialog: false,
+        deleteUserDialog: false
     }),
     computed: {
         ...mapState(['user'])
@@ -114,15 +122,54 @@ export default {
         async editUser(payload) {
             this.loading = true
 
-            await userService.updateUser({
-                id:this.user._id.$oid,
-                name: payload.name,
-                ...(!!payload.url && { url: payload.url})
-            })
+            try {
+                await userService.updateUser({
+                    id:this.user._id.$oid,
+                    name: payload.name,
+                    ...(!!payload.url && { url: payload.url})
+                })
 
-            await this.updateUser();
+                await this.updateUser();
+                
+                this.$notify({
+                    group: 'foo',
+                    title: 'Usuário atualizado com sucesso',
+                    type: 'success'
+                });
+            }
+            catch(e) {
+                this.$notify({
+                    group: 'foo',
+                    title: 'Erro ao editar usuário',
+                    text: e.message,
+                    type: 'error'
+                });
+            }
 
             this.editUserDialog = false
+            this.loading = false
+        },
+        async deleteUser() {
+            this.loading = true
+
+            try {
+                await userService.deleteUser(this.user._id.$oid)
+                this.$router.push({path: "/"})
+                this.$notify({
+                    group: 'foo',
+                    title: 'Usuário removido com sucesso',
+                    type: 'success'
+                });
+            } catch (e) {
+                this.$notify({
+                    group: 'foo',
+                    title: 'Erro ao remover usuário',
+                    text: e.message,
+                    type: 'error'
+                });
+            }
+
+            this.deleteUserDialog = false
             this.loading = false
         },
 
@@ -134,8 +181,22 @@ export default {
         async rescapperUser() {
             this.loading = true
             
-            // refaço o scrapper do usuário
-            await userService.rescrapUser(this.user._id.$oid);
+            try {
+                // refaço o scrapper do usuário
+                await userService.rescrapUser(this.user._id.$oid);
+                this.$notify({
+                    group: 'foo',
+                    title: 'Usuário atualizado com sucesso',
+                    type: 'success'
+                });
+            }catch(e) {
+                this.$notify({
+                    group: 'foo',
+                    title: 'Erro ao refazer o scrapper',
+                    text: e.message,
+                    type: 'error'
+                });
+            }
 
             await this.updateUser();
 

@@ -39,6 +39,10 @@ class UserService {
     async createUser({name, url}) {
         return await this.client.post(`/users`, {name, url})
     }
+
+    async deleteUser(id) {
+        return await this.client.delete(`/users/${id}`)
+    }
 }
 
 export default UserService

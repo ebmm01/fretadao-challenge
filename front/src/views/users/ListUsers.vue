@@ -30,6 +30,7 @@
 import UserService from "../../services/UserService";
 import UserItem from "../../components/UserItem";
 import { mapState, mapActions } from "vuex";
+import EventBus from "../../eventBus";
 
 const userService = new UserService();
 
@@ -60,8 +61,23 @@ export default {
                 const response = await userService.searchUsers(value);
 
                 this.userList = response.data
+
+                if (!response.data.length) {
+                        this.$notify({
+                        group: 'foo',
+                        title: 'Nenhum usuário encontrado para o termo informado',
+                        type: 'error'
+                    });
+                }
+                
+                
             } catch(e) {
                 this.userList = []
+                this.$notify({
+                    group: 'foo',
+                    title: 'Nenhum usuário encontrado para o termo informado',
+                    type: 'error'
+                });
             }
         },
         showUser(user) {
@@ -69,14 +85,15 @@ export default {
             this.$router.push({ path: '/details'})
         }
     },
-    watch: {
-        searchText: async function(val) {
-            this.loading = true
-            await this.searchUsers(val)
-            this.loading = false
-        }
-    },
     async created() {
+        const _this = this
+        EventBus.$on('doSeach', async value => {
+            console.log(value)
+            await _this.searchUsers(value)
+        })
+    },
+    beforeDestroy() {
+        EventBus.$off('doSeach')
     }
 }
 </script>

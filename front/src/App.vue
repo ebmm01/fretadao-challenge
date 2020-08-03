@@ -68,6 +68,7 @@
 import { mapActions } from "vuex";
 import CreateUserDialog from "./views/CreateUserDialog";
 import UserService from './services/UserService';
+import EventBus from './eventBus';
 
 const userService = new UserService();
 
@@ -84,7 +85,6 @@ export default {
     }),
     watch: {
         '$route' (to) {
-            console.log(to)
             if(to.path == "/" ) {
                 this.showSearch = true
             }
@@ -97,7 +97,7 @@ export default {
     methods: {
         ...mapActions(['setSearchText']),
         emitSearchText(value) {
-            this.setSearchText(value)
+            EventBus.$emit("doSeach", value)
         },
         async createUser(payload) {
             this.loading = true
