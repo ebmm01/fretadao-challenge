@@ -97,6 +97,7 @@ export default {
     methods: {
         ...mapActions(['setSearchText']),
         emitSearchText(value) {
+            this.setSearchText(value)
             EventBus.$emit("doSeach", value)
         },
         async createUser(payload) {

@@ -19,24 +19,45 @@
                     class="elevation-5"
                     :src="user.profile_image">
                 <div class="actions">
-                    <v-btn
-                        @click="rescapperUser"
-                        class="mx-2"
-                        fab>
-                        <v-icon>mdi-refresh</v-icon>
-                    </v-btn>
-                    <v-btn
-                        class="mx-2"
-                        @click="deleteUserDialog = true"
-                        fab>
-                        <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                    <v-btn
-                        class="mx-2"
-                        @click="editUserDialog=true"
-                        fab>
-                        <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                @click="rescapperUser"
+                                class="mx-2"
+                                v-bind="attrs"
+                                v-on="on"
+                                fab>
+                                <v-icon>mdi-refresh</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>Reescanear perfil no github</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                class="mx-2"
+                                @click="deleteUserDialog = true"
+                                fab>
+                                <v-icon>mdi-delete</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>Remover usuário</span>
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                class="mx-2"
+                                @click="editUserDialog=true"
+                                fab>
+                                <v-icon>mdi-pencil</v-icon>
+                            </v-btn>
+                        </template>
+                        <span>Editar usuário</span>
+                    </v-tooltip>
                 </div>
             </div>
         </div>
